@@ -1,0 +1,59 @@
+version: '3.8'
+services:
+    app:
+        build:
+            context: ./docker
+            dockerfile: Dockerfile
+        image: app
+        container_name: app
+        restart: unless-stopped
+        working_dir: /var/www
+        volumes:
+            - .:/var/www
+            - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+        command: bash -c "php-fpm"
+        networks:
+            - miraway
+
+    webserver:
+        image: nginx:alpine
+        container_name: nginx
+        restart: unless-stopped
+        ports:
+            - "8000:80"
+        volumes:
+            - .:/var/www
+            - ./docker/nginx/conf.d:/etc/nginx/conf.d
+        networks:
+            - miraway
+
+    db:
+        image: mysql:8.0
+        container_name: mysql
+        restart: unless-stopped
+        ports:
+            - "3306:3306"
+        environment:
+            MYSQL_DATABASE: miraway
+            MYSQL_ROOT_PASSWORD: miraway2024$
+            MYSQL_USER: miraway
+            MYSQL_PASSWORD: miraway2024$
+        volumes:
+            - ./docker/mysql:/var/lib/mysql
+        networks:
+            - miraway
+
+    redis:
+        image: redis:alpine
+        container_name: redis
+        restart: unless-stopped
+        ports:
+            - "6379:6379"
+        networks:
+            - miraway
+
+networks:
+    miraway:
+
+volumes:
+    dbdata:
