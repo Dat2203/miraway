@@ -23,8 +23,10 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
+        'is'
     ];
 
+    const IS_ADMIN = 1;
     /**
      * The attributes that should be hidden for serialization.
      *
